@@ -1,25 +1,17 @@
 {
   "expo": {
-    "name": "PetCidadao",
-    "slug": "PetCidadao",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "name": "Importa",
+    "slug": "importa-mobile",
+    "scheme": "importa",
     "userInterfaceStyle": "light",
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
-      },
-      "predictiveBackGestureEnabled": false
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
+    "newArchEnabled": true,
+    "splash": { "backgroundColor": "#FFE500" },
+    "ios": { "bundleIdentifier": "br.com.importa.mobile" },
+    "android": { "package": "br.com.importa.mobile" },
+    "web": { "bundler": "metro", "output": "single" },
+    "plugins": ["expo-router", "expo-status-bar", "expo-image", "expo-secure-store",
+      ["expo-image-picker", { "cameraPermission": "O Pet Cidadão usa a câmera para fotografar animais." }],
+      ["expo-location", { "locationWhenInUsePermission": "O Pet Cidadão usa sua localização para registrar onde o animal foi visto." }]
+    ]
   }
 }
