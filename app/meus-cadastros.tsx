@@ -1,7 +1,9 @@
 import { Stack, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { listarAnimais, listarDenuncias, type Denuncia, type RegistroAnimal } from '../lib/storage';
+import { listarAnimais } from '../lib/animais';
+import { useSessao } from '../lib/sessao';
+import { listarDenuncias, type Denuncia, type RegistroAnimal } from '../lib/storage';
 import { colors } from '../lib/theme';
 
 const especies = { cachorro: 'Cachorro', gato: 'Gato', outro: 'Outro' } as const;
@@ -41,12 +43,13 @@ function ItemDenuncia({ d }: { d: Denuncia }) {
 export default function MeusCadastros() {
   const [animais, setAnimais] = useState<RegistroAnimal[]>([]);
   const [denuncias, setDenuncias] = useState<Denuncia[]>([]);
+  const { usuario } = useSessao();
 
   useFocusEffect(
     useCallback(() => {
-      listarAnimais().then(setAnimais);
+      if (usuario) listarAnimais(usuario.id).then(setAnimais).catch(() => setAnimais([]));
       listarDenuncias().then(setDenuncias);
-    }, []),
+    }, [usuario]),
   );
 
   const vazio = animais.length === 0 && denuncias.length === 0;

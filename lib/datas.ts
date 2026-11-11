@@ -26,3 +26,15 @@ export function dataValida(texto: string): boolean {
     dt <= new Date()
   );
 }
+
+/** DD/MM/AAAA → AAAA-MM-DD (formato do Postgres). */
+export function paraISO(texto: string): string {
+  const [d, m, y] = texto.split('/');
+  return `${y}-${m}-${d}`;
+}
+
+/** AAAA-MM-DD → DD/MM/AAAA. */
+export function deISO(iso: string): string {
+  const [y, m, d] = iso.slice(0, 10).split('-');
+  return `${d}/${m}/${y}`;
+}

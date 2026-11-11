@@ -4,7 +4,6 @@ import * as Location from 'expo-location';
 import { useState, type ReactNode } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -19,6 +18,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { Coordenadas } from '../lib/storage';
 import { colors } from '../lib/theme';
+import { avisar } from '../lib/aviso';
 
 export function FormScreen({ children }: { children: ReactNode }) {
   const insets = useSafeAreaInsets();
@@ -111,7 +111,7 @@ export function PhotoPicker({
   async function daCamera() {
     const perm = await ImagePicker.requestCameraPermissionsAsync();
     if (!perm.granted) {
-      Alert.alert('Permissão necessária', 'Permita o acesso à câmera para tirar fotos.');
+      avisar('Permissão necessária', 'Permita o acesso à câmera para tirar fotos.');
       return;
     }
     const r = await ImagePicker.launchCameraAsync({ quality: 0.7 });
@@ -120,7 +120,7 @@ export function PhotoPicker({
 
   return (
     <View style={{ gap: 8 }}>
-      <Text style={s.label}>Fotos (até {max})</Text>
+      <Text style={s.label}>{max === 1 ? 'Foto' : `Fotos (até ${max})`}</Text>
       <View style={s.photos}>
         {fotos.map((uri) => (
           <View key={uri}>
@@ -166,7 +166,7 @@ export function LocationField({
     try {
       const perm = await Location.requestForegroundPermissionsAsync();
       if (!perm.granted) {
-        Alert.alert('Permissão necessária', 'Permita o acesso à localização ou digite o endereço.');
+        avisar('Permissão necessária', 'Permita o acesso à localização ou digite o endereço.');
         return;
       }
       const pos = await Location.getCurrentPositionAsync({});
@@ -177,7 +177,7 @@ export function LocationField({
         : `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
       onChange(texto, { latitude, longitude });
     } catch {
-      Alert.alert('Não foi possível obter a localização', 'Digite o endereço manualmente.');
+      avisar('Não foi possível obter a localização', 'Digite o endereço manualmente.');
     } finally {
       setCarregando(false);
     }

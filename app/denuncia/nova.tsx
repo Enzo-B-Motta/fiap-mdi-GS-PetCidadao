@@ -1,10 +1,11 @@
 import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Switch, Text, View } from 'react-native';
+import { Switch, Text, View } from 'react-native';
 import { ChoiceRow, Field, FormScreen, LocationField, PhotoPicker, PrimaryButton } from '../../components/ui';
 import { dataValida, hoje, mascaraData } from '../../lib/datas';
 import { salvarDenuncia, type Coordenadas, type Denuncia } from '../../lib/storage';
 import { colors } from '../../lib/theme';
+import { avisar } from '../../lib/aviso';
 
 export default function NovaDenuncia() {
   const router = useRouter();
@@ -20,11 +21,11 @@ export default function NovaDenuncia() {
   const [salvando, setSalvando] = useState(false);
 
   async function enviar() {
-    if (!tipo) return Alert.alert('Faltam dados', 'Escolha o tipo de situação.');
-    if (!descricao.trim()) return Alert.alert('Faltam dados', 'Descreva o que aconteceu.');
-    if (!localizacao.trim()) return Alert.alert('Faltam dados', 'Informe o local da ocorrência.');
-    if (!dataValida(data)) return Alert.alert('Data inválida', 'Use o formato DD/MM/AAAA, sem datas futuras.');
-    if (!anonima && !contato.trim()) return Alert.alert('Faltam dados', 'Informe um contato ou marque como anônima.');
+    if (!tipo) return avisar('Faltam dados', 'Escolha o tipo de situação.');
+    if (!descricao.trim()) return avisar('Faltam dados', 'Descreva o que aconteceu.');
+    if (!localizacao.trim()) return avisar('Faltam dados', 'Informe o local da ocorrência.');
+    if (!dataValida(data)) return avisar('Data inválida', 'Use o formato DD/MM/AAAA, sem datas futuras.');
+    if (!anonima && !contato.trim()) return avisar('Faltam dados', 'Informe um contato ou marque como anônima.');
 
     setSalvando(true);
     try {
@@ -38,10 +39,10 @@ export default function NovaDenuncia() {
         anonima,
         contato: anonima ? undefined : contato.trim(),
       });
-      Alert.alert('Registro salvo', 'Sua denúncia foi registrada.');
+      avisar('Registro salvo', 'Sua denúncia foi registrada.');
       router.replace('/meus-cadastros');
     } catch {
-      Alert.alert('Erro', 'Não foi possível salvar. Tente novamente.');
+      avisar('Erro', 'Não foi possível salvar. Tente novamente.');
     } finally {
       setSalvando(false);
     }
