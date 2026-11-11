@@ -3,24 +3,27 @@ import { useState } from 'react';
 import { Switch, Text, View } from 'react-native';
 import { ChoiceRow, Field, FormScreen, LocationField, PhotoPicker, PrimaryButton } from '../../components/ui';
 import { dataValida, hoje, mascaraData } from '../../lib/datas';
-import { salvarDenuncia, type Coordenadas, type Denuncia } from '../../lib/storage';
+import { salvarDenuncia } from '../../lib/denuncias';
+import { useSessao } from '../../lib/sessao';
+import type { Denuncia } from '../../lib/storage';
 import { colors } from '../../lib/theme';
 import { avisar } from '../../lib/aviso';
 
 export default function NovaDenuncia() {
   const router = useRouter();
+  const { usuario } = useSessao();
 
   const [tipo, setTipo] = useState<Denuncia['tipo'] | null>(null);
   const [descricao, setDescricao] = useState('');
   const [fotos, setFotos] = useState<string[]>([]);
   const [localizacao, setLocalizacao] = useState('');
-  const [coordenadas, setCoordenadas] = useState<Coordenadas | undefined>();
   const [data, setData] = useState(hoje());
   const [anonima, setAnonima] = useState(false);
   const [contato, setContato] = useState('');
   const [salvando, setSalvando] = useState(false);
 
   async function enviar() {
+    if (!usuario) return;
     if (!tipo) return avisar('Faltam dados', 'Escolha o tipo de situação.');
     if (!descricao.trim()) return avisar('Faltam dados', 'Descreva o que aconteceu.');
     if (!localizacao.trim()) return avisar('Faltam dados', 'Informe o local da ocorrência.');
@@ -29,12 +32,11 @@ export default function NovaDenuncia() {
 
     setSalvando(true);
     try {
-      await salvarDenuncia({
+      await salvarDenuncia(usuario.id, {
         tipo,
         descricao: descricao.trim(),
         fotos,
         localizacao: localizacao.trim(),
-        coordenadas,
         data,
         anonima,
         contato: anonima ? undefined : contato.trim(),
@@ -89,10 +91,7 @@ export default function NovaDenuncia() {
 
       <LocationField
         value={localizacao}
-        onChange={(texto, coords) => {
-          setLocalizacao(texto);
-          if (coords) setCoordenadas(coords);
-        }}
+        onChange={(texto) => setLocalizacao(texto)}
       />
 
       <Field

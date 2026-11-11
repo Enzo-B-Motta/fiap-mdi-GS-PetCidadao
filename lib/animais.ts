@@ -12,9 +12,9 @@ const TIPOS_IMAGEM: Record<string, string> = {
   heic: 'image/heic',
 };
 
-async function enviarFoto(uri: string): Promise<string> {
+export async function enviarFoto(uri: string, pasta = 'animais'): Promise<string> {
   const ext = (uri.split('?')[0].split('.').pop() ?? 'jpg').toLowerCase();
-  const caminho = `animais/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const caminho = `${pasta}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
   const resposta = await fetch(uri);
   const arquivo = await resposta.arrayBuffer();

@@ -24,12 +24,11 @@ export type RegistroAnimal = {
 };
 
 export type Denuncia = {
-  id: string;
+  id: number;
   tipo: 'abandono' | 'maus-tratos';
   descricao: string;
   fotos: string[];
   localizacao: string;
-  coordenadas?: Coordenadas;
   data: string;
   anonima: boolean;
   contato?: string;
@@ -55,11 +54,6 @@ async function adicionar<T>(chave: string, item: T): Promise<void> {
 }
 
 const novoId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-
-export const listarDenuncias = () => lerLista<Denuncia>(CHAVES.denuncias);
-
-export const salvarDenuncia = (d: Omit<Denuncia, 'id' | 'criadoEm'>) =>
-  adicionar<Denuncia>(CHAVES.denuncias, { ...d, id: novoId(), criadoEm: new Date().toISOString() });
 
 export async function obterPerfil(): Promise<Perfil> {
   const bruto = await AsyncStorage.getItem(CHAVES.perfil);

@@ -3,7 +3,8 @@ import { useCallback, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { listarAnimais } from '../lib/animais';
 import { useSessao } from '../lib/sessao';
-import { listarDenuncias, type Denuncia, type RegistroAnimal } from '../lib/storage';
+import { listarDenuncias } from '../lib/denuncias';
+import type { Denuncia, RegistroAnimal } from '../lib/storage';
 import { colors } from '../lib/theme';
 
 const especies = { cachorro: 'Cachorro', gato: 'Gato', outro: 'Outro' } as const;
@@ -47,8 +48,9 @@ export default function MeusCadastros() {
 
   useFocusEffect(
     useCallback(() => {
-      if (usuario) listarAnimais(usuario.id).then(setAnimais).catch(() => setAnimais([]));
-      listarDenuncias().then(setDenuncias);
+      if (!usuario) return;
+      listarAnimais(usuario.id).then(setAnimais).catch(() => setAnimais([]));
+      listarDenuncias(usuario.id).then(setDenuncias).catch(() => setDenuncias([]));
     }, [usuario]),
   );
 
