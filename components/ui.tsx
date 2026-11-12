@@ -19,6 +19,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { Coordenadas } from '../lib/storage';
 import { colors } from '../lib/theme';
 import { avisar } from '../lib/aviso';
+import { buscarCep, mascaraCep } from '../lib/viacep';
 
 export function FormScreen({ children }: { children: ReactNode }) {
   const insets = useSafeAreaInsets();
@@ -160,6 +161,30 @@ export function LocationField({
   onChange: (texto: string, coords?: Coordenadas) => void;
 }) {
   const [carregando, setCarregando] = useState(false);
+  const [cep, setCep] = useState('');
+  const [buscandoCep, setBuscandoCep] = useState(false);
+  const [erroCep, setErroCep] = useState('');
+  const [avisoCep, setAvisoCep] = useState('');
+
+  async function buscarEndereco() {
+    setErroCep('');
+    setAvisoCep('');
+    setBuscandoCep(true);
+    try {
+      const e = await buscarCep(cep);
+      const partes = [e.rua, e.bairro, `${e.cidade} - ${e.estado}`].filter(Boolean);
+      onChange(partes.join(', '));
+      setAvisoCep(
+        e.rua
+          ? 'Endereço preenchido. Acrescente o número, se quiser.'
+          : 'Esse CEP não traz o nome da rua. Complete o endereço abaixo.',
+      );
+    } catch (e) {
+      setErroCep((e as { message?: string }).message ?? 'Não foi possível consultar o CEP.');
+    } finally {
+      setBuscandoCep(false);
+    }
+  }
 
   async function usarMinhaLocalizacao() {
     setCarregando(true);
@@ -185,6 +210,30 @@ export function LocationField({
 
   return (
     <View style={{ gap: 8 }}>
+      <Field
+        label="CEP (opcional)"
+        placeholder="00000-000"
+        keyboardType="number-pad"
+        returnKeyType="search"
+        value={cep}
+        onChangeText={(t) => setCep(mascaraCep(t))}
+        onSubmitEditing={buscarEndereco}
+      />
+      <Pressable accessibilityRole="button" disabled={buscandoCep} onPress={buscarEndereco} style={s.ghost}>
+        {buscandoCep ? (
+          <ActivityIndicator color={colors.teal} />
+        ) : (
+          <Feather name="search" size={18} color={colors.teal} />
+        )}
+        <Text style={s.ghostText}>{buscandoCep ? 'Buscando...' : 'Buscar endereço pelo CEP'}</Text>
+      </Pressable>
+      {erroCep ? (
+        <Text accessibilityRole="alert" style={s.erroTexto}>
+          {erroCep}
+        </Text>
+      ) : null}
+      {avisoCep ? <Text style={s.infoTexto}>{avisoCep}</Text> : null}
+
       <Field
         label="Localização"
         placeholder="Rua, bairro e cidade"
@@ -277,6 +326,8 @@ const s = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   ghostText: { fontSize: 14, fontWeight: '600', color: colors.teal },
+  erroTexto: { fontSize: 13, color: colors.red },
+  infoTexto: { fontSize: 13, color: colors.muted },
   primary: { minHeight: 52, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   primaryText: { fontSize: 16, fontWeight: '800', color: colors.white },
 });
