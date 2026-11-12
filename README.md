@@ -2,7 +2,17 @@
 
 ## Ficha CitizenTech
 
-> **PREENCHER:** cole aqui a Ficha da CitizenTech fornecida pelo professor.
+| Campo | Resposta |
+| --- | --- |
+| **Nome da CitizenTech** | Pet Cidadão |
+| **Cidade e bairro** | [PREENCHER: cidade e bairro de atuação] |
+| **Cidadão beneficiado** | Tutores que perderam o animal, pessoas que encontram animais na rua, cidadãos que presenciam abandono ou maus-tratos e quem procura ONGs, abrigos, veterinários e campanhas de vacinação e castração. |
+| **Problema, em uma frase** | Quando um animal desaparece, é abandonado ou sofre maus-tratos, falta um lugar único e acessível para registrar a ocorrência e encontrar ajuda. |
+| **Como funciona** | O cidadão cria uma conta, cadastra um animal desaparecido ou encontrado (foto, características, local e data) ou registra uma denúncia, e consulta ONGs, veterinários e campanhas. Tudo fica salvo no banco e pode ser consultado em "Meus cadastros". |
+| **O que cada parte faz** | **App (Expo + React Native):** telas, formulários e navegação. **Supabase (PostgreSQL):** guarda usuários, animais e denúncias. **Supabase Storage:** guarda as fotos. **ViaCEP:** preenche o endereço a partir do CEP. |
+| **Link do repositório** | [PREENCHER: URL do repositório] |
+| **Indicador de impacto** | Número de animais cadastrados (desaparecidos e encontrados) e de denúncias registradas pelo app, medido pela contagem de linhas nas tabelas `animal` e `denuncia`. [PREENCHER: valor atual ou meta] |
+| **ODS conectados** | ODS 11 (Cidades e comunidades sustentáveis), ODS 3 (Saúde e bem-estar, pela vacinação e prevenção de zoonoses) e ODS 16 (Paz, justiça e instituições eficazes, pelo registro de denúncias). |
 
 ## Integrantes
 
