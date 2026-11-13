@@ -2,6 +2,7 @@ import { enviarFoto } from './animais';
 import { deISO, paraISO } from './datas';
 import type { Denuncia } from './storage';
 import { supabase } from './supabase';
+import { analisarFluxo } from '../cybersecurity/taint-analysis';
 
 type LinhaDenuncia = {
   id: number;
@@ -34,6 +35,24 @@ export async function salvarDenuncia(
   usuarioId: number,
   d: Omit<Denuncia, 'id' | 'criadoEm'>,
 ): Promise<void> {
+
+  // Auditoria de segurança antes do envio ao Supabase.
+  // Não registra nem exibe o conteúdo original da denúncia.
+  const auditoria = analisarFluxo(
+    d.descricao,
+    "LOG_PUBLICO"
+  );
+
+  if (!auditoria.permitido) {
+    console.warn(
+      "[PET CIDADAO - CYBERSECURITY]",
+      "PII detectada na descricao.",
+      "Tipos:",
+      auditoria.tiposPII.join(", "),
+      "Publicacao em log nao autorizada."
+    );
+  }
+
   const urls = await Promise.all(d.fotos.map((uri) => enviarFoto(uri, 'denuncias')));
 
   const { error } = await supabase.from('denuncia').insert({
